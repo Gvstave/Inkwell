@@ -1,73 +1,152 @@
-#Inkwell
+# Inkwell
 
-A minimal blogging space for thoughtful writers. No ads, no algorithm — just words, paragraphs, and the occasional em dash.
+Inkwell is a minimal blogging application for thoughtful writing: no ads, no algorithm—just words.
 
-This is a Laravel rebuild of the original Inkwell app (previously React + Supabase).
+It is built as a traditional Laravel application with server-rendered Blade views. Authors can register, write posts, keep drafts private, publish stories, and manage their own work from a dashboard.
 
-##Features
-*Authentication — register and log in with email/password
-*Write posts — title, optional short excerpt, and body content
-*Drafts & publishing — save a post as a draft or publish it, and update either state later
-*Public feed — homepage lists all published posts, newest first, with author name and date
-*Individual post pages — each published post gets its own page at /posts/{slug}
-*Author dashboard — logged-in users see a list of their own posts (draft or live), with edit and delete actions
-*Ownership rules — only a post's author can edit or delete it; drafts are only visible to their author, published posts are visible to everyone
-*Auto-generated slugs — URLs are generated automatically from the post title on creation
-##Tech Stack
+## Features
 
-Backend / Framework
+- Email and password registration and authentication
+- Password reset and email verification
+- Author dashboard containing draft and published posts
+- Create, edit, preview, publish, unpublish, and delete posts
+- Optional excerpts and long-form content
+- Automatically generated, unique post slugs
+- Public feed containing published posts only
+- Public post pages at `/posts/{slug}`
+- Policy-based ownership protection for editing and deletion
+- Private draft previews available only to the author
+- Responsive, sans-serif interface with light and dark themes
+- Profile, appearance, and account-security settings
 
-*Laravel (v13) — PHP framework handling routing, database access, and rendering
-PHP 8.2+
+## Technology
 
-##Frontend / Templating
+- PHP 8.3 or newer
+- Laravel 13
+- Laravel Fortify
+- Blade
+- Livewire 4
+- Flux UI 2
+- Tailwind CSS 4
+- Vite 8
+- SQLite
+- Pest 4
 
-*Blade — Laravel's server-side templating language
-*Livewire (with Volt single-file components) — adds interactivity to Blade views without a separate JS framework
-**Tailwind CSS — utility-first styling
-Vite — asset bundling for CSS/JS
+## Local installation
 
-##Authentication
+Requirements:
 
-Laravel's built-in authentication (registration enabled; email verification, 2FA, passkeys, and password confirmation not enabled)
+- PHP 8.3+
+- Composer
+- Node.js and npm
 
-##Database
+Clone the project, enter its directory, and install the dependencies:
 
-SQLite (single-file, no separate database server required for local development)
-
-##Authorization
-
-Laravel Policies (PostPolicy) — encode who can view, edit, or delete a post, replacing what was previously handled by Postgres Row Level Security
-
-##Data Model
-
-###users
-
-name, email, password (standard Laravel auth fields — name doubles as the display name)
-
-###posts
-
-title, slug (unique, auto-generated), excerpt (nullable), content, published (boolean), user_id (author, foreign key)
-
-##Local Development
-bash
+```bash
 composer install
 npm install
-cp .env.example .env
+```
+
+Create the local environment file and SQLite database:
+
+```bash
+php -r "file_exists('.env') || copy('.env.example', '.env');"
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
 php artisan key:generate
-touch database/database.sqlite
 php artisan migrate
+```
 
-##Run the app (two terminals):
+For a fresh installation, set `APP_NAME=Inkwell` in `.env`.
 
-bash
+## Running the application
+
+The simplest option starts Laravel, the queue worker, and Vite together:
+
+```bash
+composer run dev
+```
+
+Visit [http://localhost:8000](http://localhost:8000).
+
+Alternatively, run the web server and frontend compiler in separate terminals:
+
+```bash
 php artisan serve
+```
+
+```bash
 npm run dev
+```
 
-Visit http://localhost:8000.
+## Production assets
 
-##Roadmap / Not Yet Implemented
-Google / social sign-in
-User avatars
-Rich text or Markdown rendering for post content
-Search and pagination on the homepage
+Compile the frontend for production:
+
+```bash
+npm run build
+```
+
+The generated files are written to `public/build` and are excluded from Git.
+
+## Testing and code quality
+
+Run the full application test suite:
+
+```bash
+php artisan test --compact
+```
+
+Format changed PHP files:
+
+```bash
+vendor/bin/pint --dirty --format agent
+```
+
+Run static analysis:
+
+```bash
+php -d memory_limit=512M vendor/bin/phpstan analyse
+```
+
+## Main routes
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/` | Published-post feed |
+| `GET` | `/posts/{slug}` | Read a post or preview an owned draft |
+| `GET` | `/dashboard` | Manage the authenticated author's posts |
+| `GET` | `/posts/create` | Open the post editor |
+| `POST` | `/posts` | Create a draft or published post |
+| `GET` | `/posts/{post}/edit` | Edit an owned post |
+| `PUT` | `/posts/{post}` | Save or publish an owned post |
+| `DELETE` | `/posts/{post}` | Delete an owned post |
+
+Post-management routes require an authenticated, verified account.
+
+## Data model
+
+### Users
+
+Laravel's standard user fields are used for authentication. The `name` field is displayed as the author's name.
+
+### Posts
+
+Each post contains:
+
+- `user_id` — author
+- `title`
+- `slug` — unique public identifier
+- `excerpt` — optional summary
+- `content`
+- `published`
+- timestamps
+
+Deleting a user also deletes their posts.
+
+## Not currently included
+
+- Social sign-in
+- User avatars
+- Markdown or rich-text rendering
+- Post search
+- Homepage pagination
