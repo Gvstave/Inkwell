@@ -4,6 +4,20 @@ Inkwell is a minimal blogging application for thoughtful writing: no ads, no alg
 
 It is built as a traditional Laravel application with server-rendered Blade views. Authors can register, write posts, keep drafts private, publish stories, and manage their own work from a dashboard.
 
+## Screenshots
+
+| Published stories | Author dashboard |
+|---|---|
+| <img src="assets/images/01-homepage-authenticated.png" alt="Inkwell homepage for an authenticated author" width="300"> | <img src="assets/images/02-dashboard.png" alt="Inkwell author dashboard" width="300"> |
+
+| Post editor | Sign in |
+|---|---|
+| <img src="assets/images/03-editor.png" alt="Inkwell post editor" width="300"> | <img src="assets/images/04-login.png" alt="Inkwell sign-in page" width="300"> |
+
+| Create an account | Public homepage |
+|---|---|
+| <img src="assets/images/05-register.png" alt="Inkwell registration page" width="300"> | <img src="assets/images/06-homepage-guest.png" alt="Inkwell public homepage" width="300"> |
+
 ## Features
 
 - Email and password registration and authentication
